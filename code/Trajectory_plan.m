@@ -13,9 +13,9 @@ robot=SerialLink([L1 L2 L3 L4 L5 L6],'name','UR5e');
 
 %定义轨迹规划初始关节角度（First_Theta）和终止关节角度（Final_Theta）,步数100
 First_Theta = [0     -pi/2     pi/2     0     0     0];
-Final_pos=[0.05,0.8,0.5,-pi/2,0,0];
-pos_list=[0.05,0.8,0.5,-pi/2,0,0;
-          -0.05,0.8,0.5,-pi/2,0,0;
+% Final_pos=[0.05,0.8,0.5,-pi/2,0,0];
+pos_list=[0.05,0.6,0.5,-pi/2,0,0;
+          -0.05,0.6,0.5,-pi/2,0,0;
           -0.12,0.77,0.42,-pi/2,0,0;
           -0.12,0.75,0.32,-pi/2,0,0;
           -0.05,0.8,0.25,-pi/2,0,0;
@@ -68,9 +68,32 @@ for j=(1:8)
     % Theta_linear=Linear_Traj(Linear_init,Linear_end);
     % Theta=[Theta;Theta_linear];
     
+   
+    Total_inser_time=5;
+    Total_insert_len=0.03;
+    Total_insert_step=30;
+    Inser_Theta=zeros(Total_insert_step,6);
+    Inser_Theta(1,:)=Theta(step,:);
+    dt=Total_inser_time/Total_insert_step;
+    Insert_Start_point=Final_pos;
+    for i=1:Total_insert_step-1
+         Insert_End_point=Insert_Start_point+[0,Total_insert_len/Total_insert_step,0,0,0,0];
+         Inser_Theta(i+1,:)=Insert(Insert_Start_point,Insert_End_point,Inser_Theta(i,:),dt);
+         Insert_Start_point=Insert_End_point;
+    end
     % 可视化轨迹
     for i = 1:step
         robot.plot(Theta(i,:));
+        drawnow
+    end
+
+     for i = 1:Total_insert_step
+        robot.plot(Inser_Theta(i,:));
+        drawnow
+     end
+
+     for i = Total_insert_step:1
+        robot.plot(Inser_Theta(i,:));
         drawnow
     end
 end
