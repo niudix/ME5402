@@ -3,6 +3,7 @@ clc
 clear
 close all
 addpath 'C:\Users\ndxnd\Documents\MATLAB\Examples\R2023a\urseries\MotionPlanningRBTSimulationUR5eBinPickingManipulatorRRTExample'
+addpath './function/'
 ur5eRBT = loadrobot('universalUR5e','DataFormat','row');
 ur5e = exampleHelperAddGripper(ur5eRBT);
 % Home Position
@@ -50,18 +51,18 @@ for j=(1:8)
     step = 100;
     
     
-    % 时间参数
-    T = 1; % 假设从起点到终点的时间为1秒
-    t = linspace(0, T, step); % 生成时间向量
+   % Time parameters
+    T = 1; % Assume the time from start to endpoint is 1 second
+    t = linspace(0, T, step); % Generate time vector
     
-    % 假设初始速度和加速度都为零，终止速度和加速度也为零
-    theta_dot_0 = zeros(1, 6); % 初始速度
-    theta_ddot_0 = zeros(1, 6); % 初始加速度
-    theta_dot_f = zeros(1, 6); % 终止速度
-    theta_ddot_f = zeros(1, 6); % 终止加速度
-    t_f = 1; % 插值总时间
+    % Assuming initial and final velocities and accelerations are zero
+    theta_dot_0 = zeros(1, 6); % Initial velocity
+    theta_ddot_0 = zeros(1, 6); % Initial acceleration
+    theta_dot_f = zeros(1, 6); % Final velocity
+    theta_ddot_f = zeros(1, 6); % Final acceleration
+    t_f = 1; % Total interpolation time
     
-    % 计算五次多项式的系数
+    % Calculate coefficients for the quintic polynomial
     a0 = homePosition;
     a1 = theta_dot_0;
     a2 = theta_ddot_0 / 2;
@@ -72,12 +73,13 @@ for j=(1:8)
     a5 = (12*(Final_Theta - homePosition) - 6*(theta_dot_f + theta_dot_0)*t_f ...
         - (theta_ddot_0 - theta_ddot_f)*t_f^2) / (2*t_f^5);
     
-    % 使用五次多项式计算每个时间点的关节角度
-    Theta = zeros(step, 6); % 初始化关节角度矩阵
+    % Calculate joint angles at each time point using the quintic polynomial
+    Theta = zeros(step, 6); % Initialize joint angle matrix
     for i = 1:step
         t_i = t(i);
         Theta(i,:) = a0 + a1*t_i + a2*t_i^2 + a3*t_i^3 + a4*t_i^4 + a5*t_i^5;
     end
+
     
     % Linear_init=Final_pos;
     % Linear_end=Final_pos+[0,0.01,0,0,0,0];
@@ -101,6 +103,7 @@ for j=(1:8)
 
     rateObj = rateControl(20);
     rateinst= rateControl(1/dt);
+    pause_time=3;
 
 
     for i = 1 : size(Theta)
@@ -108,12 +111,15 @@ for j=(1:8)
         drawnow
         waitfor(rateObj);
     end
+    pause(pause_time);
     
     for i = 1 : size(Inser_Theta)
         show(ur5e,Inser_Theta(i,:),'PreservePlot',false,'Frames','off','Collisions','off','Visuals','on','FastUpdate',true);
         drawnow
         waitfor(rateinst);
     end
+    pause(pause_time);
+
     for i = size(Inser_Theta) :-1: 1
         show(ur5e,Inser_Theta(i,:),'PreservePlot',false,'Frames','off','Collisions','off','Visuals','on','FastUpdate',true);
         drawnow
