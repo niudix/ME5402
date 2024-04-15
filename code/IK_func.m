@@ -27,10 +27,8 @@ function[theta_sol]=IK_func(Position)
     
     % 显示结果
     if exitflag > 0
-        disp('解 theta:');
+        disp('Theta:');
         disp(theta_sol);
-    else
-        disp('求解失败。');
     end
 end
 

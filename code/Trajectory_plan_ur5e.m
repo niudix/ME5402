@@ -19,7 +19,7 @@ ur5e.Bodies{1, 8}.Joint.HomePosition = homePosition(6);
 
 % Show robot at home position
 f1 = figure;
-show(ur5e,homePosition,'Frames','on','PreservePlot',false,'Collisions','off','Visuals','on');
+show(ur5e,homePosition,'Frames','on','PreservePlot',true,'Collisions','off','Visuals','on');
 hold on
 
 % Limit the Z-axis
@@ -32,10 +32,10 @@ ylim([-1 1]); % 设置Z轴的显示范围从-1到无穷大
 pos_list=[0.05,0.6,0.58,-pi/2,0,0;
           0.05,0.6,0.55,-pi/2,0,0;
           0.05,0.6,0.52,-pi/2,0,0;
-          0.08,0.6,0.52,-pi/2,0,0;
-          0.12,0.6,0.52,-pi/2,0,0;
           0.05,0.6,0.4,-pi/2,0,0;
+          0.08,0.6,0.4,-pi/2,0,0;
           0.05,0.6,0.35,-pi/2,0,0;
+          0.08,0.6,0.35,-pi/2,0,0;
           0.05,0.6,0.3,-pi/2,0,0];
 Jac_mtx = find_jacobian;
 
@@ -86,7 +86,7 @@ for j=(1:8)
     
     Total_inser_time=5;
     Total_insert_len=0.06;
-    Total_insert_step=30;
+    Total_insert_step=60;
     Inser_Theta=zeros(Total_insert_step,6);
     Inser_Theta(1,:)=Theta(step,:);
     dt=Total_inser_time/Total_insert_step;
@@ -97,12 +97,14 @@ for j=(1:8)
          Insert_Start_point=Insert_End_point;
     end
 
+    
+
     rateObj = rateControl(20);
     rateinst= rateControl(1/dt);
 
+
     for i = 1 : size(Theta)
         show(ur5e,Theta(i,:),'PreservePlot',false,'Frames','off','Collisions','off','Visuals','on','FastUpdate',true);
-        
         drawnow
         waitfor(rateObj);
     end
@@ -117,5 +119,11 @@ for j=(1:8)
         drawnow
         waitfor(rateinst);
     end
+
+
 end
+
+% Plot Joint 
+Theta_plot(Theta,dt)
+End_Point_plot(Inser_Theta,dt,Jac_mtx)
 

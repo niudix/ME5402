@@ -14,5 +14,5 @@ disp(T);
 
 %% IK
 %roll, pitch, yaw, x_pos, y_pos, z_pos
-theta_solved=IK_func(T);
+[theta_solved]=IK_func(T);
 
