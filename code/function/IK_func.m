@@ -22,14 +22,10 @@ function[theta_sol]=IK_func(Position)
     ub = [pi, pi/2, pi, pi, pi/2, pi]; % Upper bounds
     
     % Call fmincon
-    options = optimoptions('fmincon', 'Display', 'iter', 'Algorithm', 'sqp');
+    options = optimoptions('fmincon', 'Display', 'off', 'Algorithm', 'sqp');
+
     [theta_sol, ~, exitflag, ~] = fmincon(error_function, theta0, [], [], [], [], lb, ub, [], options);
     
-    % Display results
-    if exitflag > 0
-        disp('Theta:');
-        disp(theta_sol);
-    end
 end
 
 function error = compute_error(T_func, theta_values, Position)

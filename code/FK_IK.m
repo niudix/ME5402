@@ -1,6 +1,6 @@
 clear;
 clc;
-
+addpath './function/'
 %% FK
 
 syms theta1 theta2 theta3 theta4 theta5 theta6
@@ -9,6 +9,7 @@ theta_symb=[theta1, theta2, theta3, theta4, theta5, theta6];
 
 theta=theta_num;
 T=FK_func(theta);
+disp('T_mtx=')
 disp(T);
 
 
@@ -16,3 +17,5 @@ disp(T);
 %roll, pitch, yaw, x_pos, y_pos, z_pos
 [theta_solved]=IK_func(T);
 
+disp('Theta:');
+disp(theta_solved);

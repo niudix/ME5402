@@ -105,21 +105,25 @@ for j=(1:8)
     rateinst= rateControl(1/dt);
     pause_time=3;
 
-
+    disp('Move to Acupuncture Points')
     for i = 1 : size(Theta)
         show(ur5e,Theta(i,:),'PreservePlot',false,'Frames','off','Collisions','off','Visuals','on','FastUpdate',true);
         drawnow
         waitfor(rateObj);
     end
+    disp('Pause')
     pause(pause_time);
     
+    disp('Start Insert')
     for i = 1 : size(Inser_Theta)
         show(ur5e,Inser_Theta(i,:),'PreservePlot',false,'Frames','off','Collisions','off','Visuals','on','FastUpdate',true);
         drawnow
         waitfor(rateinst);
     end
+    disp('Pause')
     pause(pause_time);
-
+    
+    disp('Return')
     for i = size(Inser_Theta) :-1: 1
         show(ur5e,Inser_Theta(i,:),'PreservePlot',false,'Frames','off','Collisions','off','Visuals','on','FastUpdate',true);
         drawnow
